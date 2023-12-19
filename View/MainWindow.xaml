@@ -1,0 +1,260 @@
+﻿<Window x:Class="TrafficModeling.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:props="clr-namespace:TrafficModeling.Properties"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:local1="clr-namespace:TrafficModeling.ViewModel" xmlns:src="clr-namespace:TrafficModeling" d:DataContext="{d:DesignInstance Type=local1:MainWindowVM}"
+        mc:Ignorable="d"
+        Title="Traffic Simulation" 
+        Width="1150"
+        Height="400"
+        IsEnabled="{Binding Path=IsWindowEnabled}">
+    <Window.Resources>
+        <src:IntToTimeConverter x:Key="IntToTimeConverter"/>
+
+        <local1:MainWindowVM x:Key="Ods"/>
+
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Right"
+                           Background="Transparent"
+                           Foreground="Red" 
+                           FontSize="15"
+                           FontWeight="Heavy"
+                           Text="! "
+                           ToolTipService.InitialShowDelay="5"
+                           ToolTip="{Binding ErrorContent}">
+                </TextBlock>
+                <AdornedElementPlaceholder/>
+            </DockPanel>
+        </ControlTemplate>
+
+    </Window.Resources>
+
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="49*"/>
+            <ColumnDefinition Width="1101*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl Name="Tab_Model" Grid.ColumnSpan="2">
+            <TabItem Header="Параметры модели">
+                <Grid Background="White">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Margin="0,10">
+                        <StackPanel Orientation="Vertical"
+                                    Margin="0,0,20,0" Height="326">
+                            <GroupBox Header="Основные:" Height="83" Width="448">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="5,5,5,0">
+                                        <Label Content="Длительность зеленой фазы светофора:"/>
+                                        <TextBox x:Name="TrafficLightTime"
+                                                 Width="30"
+                                                 Margin="0,5"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Text="{Binding TrafficLightTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Label Content="длительность красной:"/>
+                                        <TextBox x:Name="TrafficLightDelay"
+                                                 Width="30"
+                                                 Margin="0,5"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Text="{Binding TrafficLightDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="5,0,5,5">
+                                        <Label Content="Длительность симуляции (в часах):"/>
+                                        <TextBox x:Name="SimulationTime"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Width="30"
+                                                 Margin="0,5"
+                                                 Text="{Binding SimulationTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Label Content="длина дороги:"/>
+                                        <TextBox x:Name="Length"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Width="34"
+                                                 Margin="0,5"
+                                                 Text="{Binding RoadLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Label Content="м"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="Параметры скорости машин в потоке:">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal"
+                                        Margin="5,0,5,0">
+                                        <Label Content="Средняя скорость машин:"/>
+                                        <TextBox 
+                                                 x:Name="CivCarSpeed"
+                                                 Width="30"
+                                                 Margin="0,5"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Text="{Binding CarSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Label Content="отклонение:"/>
+                                        <TextBox x:Name="CivCarStdDev"
+                                                 Width="30"
+                                                 Margin="0,5"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Text="{Binding CarSpeedDeviance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="Параметры частоты генерации машин в потоках:">
+                                <StackPanel Orientation="Vertical" Height="61">
+                                    <StackPanel Orientation="Horizontal"
+                                        Margin="5,5,5,0">
+                                        <Label Content="Интервал для первого направления:"
+                                           Width="210"/>
+                                        <TextBox x:Name="InputStream1ExpValue"
+                                                 Margin="0,5"
+                                                 Width="30"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Text="{Binding InputStream1ExpValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Label Content="отклонение:"/>
+                                        <TextBox x:Name="InputStream1Dispersion"
+                                                 Width="30"
+                                                 Margin="0,5"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Text="{Binding InputStream1Dispersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"
+                                        Margin="5,0,5,5">
+                                        <Label Content="Интервал для второго направления:"
+                                           Width="210"/>
+                                        <TextBox x:Name="InputStream2ExpValue"
+                                                 Width="30"
+                                                 Margin="0,5"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Text="{Binding InputStream2ExpValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <Label Content="отклонение:"/>
+                                        <TextBox x:Name="InputStream2Dispersion"
+                                                 Margin="0,5"
+                                                 Width="30"
+                                                 Validation.ErrorTemplate="{StaticResource validationTemplate}"
+                                                 Text="{Binding InputStream2Dispersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,10,0,0">
+                                <Button x:Name="ButtonStart"
+                                        Content="Запуск"
+                                        Height="40"
+                                        Width="120"
+                                        Command="{Binding StartCommand}"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical"
+                                    Margin="0,0,20,0">
+                            <GroupBox Header="Статистика последней симуляции"
+                                      MinWidth="460">
+                                <StackPanel Orientation="Vertical" >
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Симуляция длилась:"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.TotalSimulationTime, Converter={StaticResource IntToTimeConverter}}" 
+                                               x:Name="simulationTime"
+                                               Margin="0,5"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Машин проехало участок:"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.TotalCars}"
+                                               x:Name="totalCars"
+                                               Margin="0,5"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="По направлениям: [1]:"
+                                           Margin="20,0,0,0"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.TotalCarsInStream1}"
+                                               x:Name="totalCarsInStream1"
+                                               Margin="0,5"/>
+                                        <Label Content="[2]: "/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.TotalCarsInStream2}"
+                                               x:Name="totalCarsInStream2"
+                                               Margin="0,5"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Среднее время проезда: в [1]:"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.AvgServeTimeInStream1, Converter={StaticResource IntToTimeConverter}}"
+                                               x:Name="avgServeTimeInStream1"
+                                               Margin="0,5"/>
+                                        <Label Content="во [2]:"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.AvgServeTimeInStream2, Converter={StaticResource IntToTimeConverter}}"
+                                               x:Name="avgServeTimeInStream2"
+                                               Margin="0,5"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Среднее время ожидания в [1]:"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.AvgWaitingTimeInStream1, Converter={StaticResource IntToTimeConverter}}"
+                                               x:Name="avgWaitTimeInStream1"
+                                               Margin="0,5"/>
+                                        <Label Content="во [2]: "/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.AvgWaitingTimeInStream2, Converter={StaticResource IntToTimeConverter}}"
+                                               x:Name="avgWaitTimeInStream2"
+                                               Margin="0,5"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Самая медленная машина проехала участок за:"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.MaxTravelTime, Converter={StaticResource IntToTimeConverter}}"
+                                               x:Name="maxServeTime"
+                                               Margin="0,5"/>
+                                        <Label Content=".Самая быстрая за:"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.MinTravelTime, Converter={StaticResource IntToTimeConverter}}"
+                                               x:Name="minServeTime"
+                                               Margin="0,5"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Самое долгое ожидание:"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.MaxWaitingTime, Converter={StaticResource IntToTimeConverter}}"
+                                               x:Name="maxWaitTime"
+                                               Margin="0,5"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Машины в очереди к концу симуляции (не обслуженные):"/>
+                                        <TextBlock Text="{Binding Simulat.SimStats.CarsInQueue}"
+                                               x:Name="carsInQueue"
+                                               Margin="0,5"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Графики">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding ChartVM.ToggleSeries0Command}" Margin="15">Скрыть первый</Button>
+                            <Button Command="{Binding ChartVM.ToggleSeries1Command}" Margin="15">Скрыть второй</Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                            <TextBlock Text="Динамика количества машин в очередях"
+                           FontSize="20"
+                           VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <lvc:CartesianChart
+                        Name="Charts"
+                        Grid.Row="1"
+                        Series="{Binding ChartVM.SeriesCollection}"
+                        XAxes="{Binding ChartVM.XAxes}"
+                        YAxes="{Binding ChartVM.YAxes}"
+                        ZoomMode="X"
+                        />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
